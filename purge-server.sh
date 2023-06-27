@@ -18,7 +18,7 @@ then
 fi
 
 color "33" "Please enter the number of light clients that were deployed earlier.[default=3]"
-read LIGHT_CLIENT
+read LIGHT_COUNT
 if [ -z $LIGHT_COUNT ]
 then
     LIGHT_COUNT=3
@@ -45,6 +45,8 @@ do
 done
 color "32" "Purged the light client systemd files"
 sleep 2
+
+sudo systemctl daemon-reload
 
 color "33" "Deleting the avail home and keys directories"
 
