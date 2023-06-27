@@ -45,7 +45,7 @@ then
 fi
 
 # Keys creation
-color "33" "Setting up sudo, tech-committee and validators accounts and creating their keys"
+color "33" "Setting up sudo, tech-committee and validator accounts and creating their keys"
 sleep 4
 
 mkdir $HOME/avail-keys
@@ -88,7 +88,7 @@ CHAIN_NAME=$(cat $HOME/avail-keys/populated.devnet.chainspec.raw.json | jq -r .i
 color "32" "Generated the chainspec. Chain id of the devnet is $CHAIN_NAME"
 sleep 4
 
-color "33" "Creating validator home directories and importing keys"
+color "33" "Creating validator home directories and importing respective keys"
 sleep 4
 
 mkdir -p $HOME/avail-home/avail-validators
@@ -103,8 +103,8 @@ do
     DIFF=$(($i - 1))
     INC=$(($DIFF * 2))
     RPC=$((26657 + $INC))
-    P2P=$((30333 + $INC))
     echo "--bootnodes=/ip4/127.0.0.1/tcp/$P2P/p2p/$NODE_KEY" >> $HOME/avail-keys/bootnode.txt
+    P2P=$((30333 + $INC))
 done
 
 color "33" "Created validator home directories and importing respective keys"
@@ -218,12 +218,12 @@ sleep 4
 for (( i=1; i<=$VAL_COUNT; i++ ))
 do
     color "32" "You can find the logs of validator $i by executing 'sudo journalctl -u avail-val-${i}.service -f'"
-    sleep 2
+    sleep 1
 done
 
 for (( i=1; i<=$LIGHT_COUNT; i++ ))
 do
     color "32" "You can find the logs of light client $i by executing 'sudo journalctl -u avail-light-${i}.service -f'"
-    sleep 2
+    sleep 1
 done
 
