@@ -30,7 +30,7 @@ then
     LIGHT_COUNT=3
 fi
 
-color "32" "Setting up $VAL_COUNT validators and $LIGHT_COUNT light clients. Press ENTER to proceed of Ctrl+c to exit the setup"
+color "32" "Setting up $VAL_COUNT validators and $LIGHT_COUNT light clients. Press ENTER to proceed or Ctrl+c to exit the setup"
 read
 
 
@@ -215,13 +215,13 @@ sleep 4
 
 for (( i=1; i<=$VAL_COUNT; i++ ))
 do
-    color "32" "You can find the logs of validator $i by executing "sudo journalctl -u avail-val-${i}.service -f""
+    color "32" "You can find the logs of validator $i by executing 'sudo journalctl -u avail-val-${i}.service -f'"
     sleep 2
 done
 
 for (( i=1; i<=$LIGHT_COUNT; i++ ))
 do
-    color "32" "You can find the logs of light client $i by executing "sudo journalctl -u avail-light-${i}.service -f""
+    color "32" "You can find the logs of light client $i by executing 'sudo journalctl -u avail-light-${i}.service -f'"
     sleep 2
 done
 
