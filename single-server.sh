@@ -207,10 +207,12 @@ done
 color "32" "Created and started avail light clients systemd processes"
 sleep 4
 color "32" "One-click devnet setup is now complete."
+sleep 3
 color "32" "Chain id of the devnet is $CHAIN_NAME"
-color "32" "You can find all the keys at $HOME/avail-keys"
+sleep 3
+color "32" "You can find all the keys for testing purposes at $HOME/avail-keys"
+sleep 3
 color "32" "You can find the home directories of validators and light clients at $HOME/avail-home"
-
 sleep 4
 
 for (( i=1; i<=$VAL_COUNT; i++ ))
