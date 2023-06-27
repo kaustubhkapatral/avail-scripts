@@ -103,8 +103,8 @@ do
     DIFF=$(($i - 1))
     INC=$(($DIFF * 2))
     RPC=$((26657 + $INC))
+    P2P=$((30331 + $INC))
     echo "--bootnodes=/ip4/127.0.0.1/tcp/$P2P/p2p/$NODE_KEY" >> $HOME/avail-keys/bootnode.txt
-    P2P=$((30333 + $INC))
 done
 
 color "33" "Created validator home directories and importing respective keys"
