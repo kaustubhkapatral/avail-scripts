@@ -117,14 +117,14 @@ do
     DIFF=$(($i - 1))
     INC=$(($DIFF * 2))
     RPC=$((26657 + $INC))
-    
+    P2P=$((30333 + $INC))
     echo "[Unit]
     Description=Avail val ${i} daemon
     After=network.target
     [Service]
     Type=simple
     User=$USER
-    ExecStart=$(which data-avail) --validator --allow-private-ipv4 --base-path $HOME/avail-home/avail-validators/validator-$i --rpc-port $RPC --chain $HOME/avail-keys/populated.devnet.chainspec.raw.json $(cat $HOME/avail-keys/bootnode.txt) 
+    ExecStart=$(which data-avail) --validator --allow-private-ipv4 --base-path $HOME/avail-home/avail-validators/validator-$i --rpc-port $RPC --port $P2P --chain $HOME/avail-keys/populated.devnet.chainspec.raw.json $(cat $HOME/avail-keys/bootnode.txt) 
     Restart=on-failure
     RestartSec=3
     LimitNOFILE=4096
