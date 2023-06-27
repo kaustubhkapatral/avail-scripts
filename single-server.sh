@@ -106,7 +106,7 @@ do
     echo "--bootnodes=/ip4/127.0.0.1/tcp/$P2P/p2p/$NODE_KEY" >> $HOME/avail-keys/bootnode.txt
 done
 
-color "33" "Created validator home directories and importing respective keys"
+color "32" "Created validator home directories and importing respective keys"
 sleep 4
 
 color "33" "Generating systemd service files for validators"
