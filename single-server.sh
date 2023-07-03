@@ -142,7 +142,7 @@ echo "[Unit]
     [Service]
     Type=simple
     User=$USER
-    ExecStart=$(which data-avail) --rpc-port 9933 --ws-port 9944 --ws-external --rpc-external --unsafe-ws-external --unsafe-rpc-external --allow-private-ipv4 --base-path $HOME/avail-home/avail-full-node --chain $HOME/avail-keys/populated.devnet.chainspec.raw.json $(cat $HOME/avail-keys/bootnode.txt) 
+    ExecStart=$(which data-avail) --rpc-cors=all --rpc-port 9933 --ws-port 9944 --ws-external --rpc-external --unsafe-ws-external --unsafe-rpc-external --allow-private-ipv4 --base-path $HOME/avail-home/avail-full-node --chain $HOME/avail-keys/populated.devnet.chainspec.raw.json $(cat $HOME/avail-keys/bootnode.txt) 
     Restart=on-failure
     RestartSec=3
     LimitNOFILE=4096
