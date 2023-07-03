@@ -102,7 +102,7 @@ do
     export NODE_KEY=$(cat $HOME/avail-keys/validator-$i.public.key)
     DIFF=$(($i - 1))
     INC=$(($DIFF * 2))
-    P2P=$((30333 + $INC))
+    P2P=$((30335 + $INC))
     echo "--bootnodes=/ip4/127.0.0.1/tcp/$P2P/p2p/$NODE_KEY" >> $HOME/avail-keys/bootnode.txt
 done
 
@@ -117,7 +117,7 @@ do
     DIFF=$(($i - 1))
     INC=$(($DIFF * 2))
     RPC=$((26657 + $INC))
-    P2P=$((30333 + $INC))
+    P2P=$((30335 + $INC))
     echo "[Unit]
     Description=Avail val ${i} daemon
     After=network.target
@@ -134,6 +134,21 @@ do
     #sudo systemctl enable avail-val-${i}.service
     sudo systemctl start avail-val-${i}.service
 done
+
+echo "[Unit]
+    Description=Avail val ${i} daemon
+    After=network.target
+    [Service]
+    Type=simple
+    User=$USER
+    ExecStart=$(which data-avail) --ws-external --rpc-external --unsafe-ws-external --unsafe-rpc-external --allow-private-ipv4 --base-path $HOME/avail-home/avail-full-node --rpc-port --chain $HOME/avail-keys/populated.devnet.chainspec.raw.json $(cat $HOME/avail-keys/bootnode.txt) 
+    Restart=on-failure
+    RestartSec=3
+    LimitNOFILE=4096
+    [Install]
+    WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/avail-light.service"
+
+sudo systemctl start avail-light.service
 
 color "32" "Created and started avail validators systemd processes"
 sleep 4
