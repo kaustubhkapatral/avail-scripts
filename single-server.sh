@@ -136,7 +136,7 @@ do
 done
 
 echo "[Unit]
-    Description=Avail val ${i} daemon
+    Description=Avail full node daemon
     After=network.target
     [Service]
     Type=simple
@@ -146,9 +146,9 @@ echo "[Unit]
     RestartSec=3
     LimitNOFILE=4096
     [Install]
-    WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/avail-light.service"
+    WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/avail-full.service"
 
-sudo systemctl start avail-light.service
+sudo systemctl start avail-full.service
 
 color "32" "Created and started avail validators systemd processes"
 sleep 4
