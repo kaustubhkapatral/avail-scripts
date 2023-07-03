@@ -46,6 +46,10 @@ done
 color "32" "Purged the light client systemd files"
 sleep 2
 
+sudo systemctl stop avail-full.service
+
+sudo rm /etc/systemd/system/avail-full.service
+
 sudo systemctl daemon-reload
 
 color "33" "Deleting the avail home and keys directories"
