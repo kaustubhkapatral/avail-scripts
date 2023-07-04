@@ -264,6 +264,7 @@ cd ~/avail-apps
 git checkout 1.6-rc1
 yarn
 export IP=$(curl ifconfig.me)
+rm .env
 echo "WS_URL=ws://$IP:9944" >> .env
 echo "[Unit]
     Description=Explorer
@@ -278,7 +279,7 @@ echo "[Unit]
     LimitNOFILE=4096
     [Install]
     WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/explorer.service"
-
+sudo systemctl daemon-reload 
 sudo systemctl start explorer.service
 
 color "32" "Created and started avail light clients systemd processes"

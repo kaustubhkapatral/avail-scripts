@@ -48,7 +48,11 @@ sleep 2
 
 sudo systemctl stop avail-full.service
 
+sudo systemctl stop explorer.service
+
 sudo rm /etc/systemd/system/avail-full.service
+
+sudo rm /etc/systemd/system/explorer.service
 
 sudo systemctl daemon-reload
 
@@ -57,5 +61,7 @@ color "33" "Deleting the avail home and keys directories"
 rm -rf $HOME/avail-home
 
 rm -rf $HOME/avail-keys
+
+rm -rf $HOME/avail-apps
 
 color "32" "Purged the avail home and keys directories"
