@@ -293,7 +293,7 @@ echo "[Unit]
     WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/explorer.service"
 sudo systemctl daemon-reload 
 sudo systemctl start explorer.service
-echo "Explorer url is http://$IP:3000" > $HOME/endpoints.txt
+echo "Explorer url is http://$IP:3000" >> $HOME/endpoints.txt
 
 color "32" "Created and started avail light clients systemd processes"
 sleep 4
