@@ -245,7 +245,7 @@ confidence = 92.0
 prometheus_port = $PROM
 avail_path = \"$HOME/avail-home/avail-light/light-$i\"
 " | sudo tee "$HOME/avail-home/avail-light/light-$i/config.yaml" 
-echo "HTTP port of light client 1 is: http://$IP:$HTTP" >> $HOME/endpoints.txt
+echo "HTTP port of light client $i is: http://$IP:$HTTP" >> $HOME/endpoints.txt
 
 done
 
