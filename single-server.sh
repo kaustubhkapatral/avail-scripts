@@ -33,15 +33,53 @@ fi
 color "32" "Setting up $VAL_COUNT validators and $LIGHT_COUNT light clients. Press ENTER to proceed or Ctrl+c to exit the setup"
 read
 
+curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 
-if ! command -v data-avail &> /dev/null
+sudo apt-get install -y nodejs
+
+npm install -g yarn
+
+while getopts ":d:r:b:i:" flag
+do
+    case "$flag" in
+        n) node_tag=${OPTARG};;
+        l) light_tag=${OPTARG};;
+    esac
+done
+
+if [ -z "$node_tag" ]
 then
-    echo "data-avail could not be found"
+    echo "Please use the -n switch to provide node tag to be deployed"
+    exit
 fi
 
-if ! command -v jq &> /dev/null
+if [ -z "$light_tag" ]
 then
-    echo "jq could not be found"
+    echo "Please use the -l switch to provide light client tag to be deployed"
+    exit
+fi
+
+export aarch=$(uname -m)
+
+
+if [ $aarch == "x86_64" ]
+then
+    wget https://github.com/availproject/avail/releases/download/$node_tag/data-avail-linux-amd64.tar.gz
+    tar -xvf data-avail-linux-amd64.tar.gz
+    sudo mv data-avail-linux-amd64 /usr/bin/data-avail
+    wget https://github.com/availproject/avail-light/releases/download/$light_tag/avail-light-linux-amd64.tar.gz 
+    tar -xvf avail-light-linux-amd64.tar.gz
+    sudo mv avail-light-linux-amd64 /usr/bin/avail-light
+fi
+
+if [ $aarch == "aarch64" ]
+then
+    wget https://github.com/availproject/avail/releases/download/$node_tag/data-avail-linux-aarch64.tar.gz
+    tar -xvf data-avail-linux-aarch64.tar.gz
+    sudo mv data-avail-linux-aarch64 /usr/bin/data-avail
+    wget https://github.com/availproject/avail-light/releases/download/$light_tag/avail-light-linux-aarch64.tar.gz 
+    tar -xvf avail-light-linux-aarch64.tar.gz
+    sudo mv avail-light-linux-aarch64 /usr/bin/avail-light 
 fi
 
 # Keys creation
