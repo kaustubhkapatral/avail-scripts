@@ -39,7 +39,7 @@ sudo apt-get install -y nodejs
 
 npm install -g yarn
 
-while getopts ":d:r:b:i:" flag
+while getopts ":n:l:" flag
 do
     case "$flag" in
         n) node_tag=${OPTARG};;
