@@ -64,4 +64,6 @@ rm -rf $HOME/avail-keys
 
 rm -rf $HOME/avail-apps
 
+rm $HOME/endpoints.txt
+
 color "32" "Purged the avail home and keys directories"

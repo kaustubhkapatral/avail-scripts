@@ -71,6 +71,7 @@ then
     wget https://github.com/availproject/avail-light/releases/download/$light_tag/avail-light-linux-amd64.tar.gz 
     tar -xvf avail-light-linux-amd64.tar.gz
     sudo mv avail-light-linux-amd64 /usr/bin/avail-light
+    rm avail-light-linux-amd64.tar.gz
 fi
 
 if [ $aarch == "aarch64" ]
@@ -81,6 +82,7 @@ then
     wget https://github.com/availproject/avail-light/releases/download/$light_tag/avail-light-linux-aarch64.tar.gz 
     tar -xvf avail-light-linux-aarch64.tar.gz
     sudo mv avail-light-linux-aarch64 /usr/bin/avail-light 
+    rm avail-light-linux-aarch64.tar.gz
 fi
 
 # Keys creation
@@ -88,6 +90,7 @@ color "33" "Setting up sudo, tech-committee and validator accounts and creating 
 sleep 4
 
 mkdir $HOME/avail-keys
+export IP=$(curl ifconfig.me)
 
 for (( i=1; i<=$VAL_COUNT; i++ ))
 do 
@@ -173,6 +176,8 @@ do
 
     #sudo systemctl enable avail-val-${i}.service
     sudo systemctl start avail-val-${i}.service
+    echo "Validator $i RPC endpoint is: http://$IP:$RPC" >> $HOME/endpoints.txt
+    echo "Validator $i WS endpoint is : http://$IP:$WS" >> $HOME/endpoints.txt
 done
 
 echo "[Unit]
@@ -189,6 +194,8 @@ echo "[Unit]
     WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/avail-full.service"
 
 sudo systemctl start avail-full.service
+echo "Fullnode RPC endpoint is: http://$IP:9933" >> $HOME/endpoints.txt
+echo "Fullnode WS endpoint is: http://$IP:9944" >> $HOME/endpoints.txt
 
 color "32" "Created and started avail validators systemd processes"
 sleep 4
@@ -263,7 +270,6 @@ git clone https://github.com/availproject/avail-apps.git ~/avail-apps
 cd ~/avail-apps
 git checkout 1.6-rc1
 yarn
-export IP=$(curl ifconfig.me)
 rm .env
 echo "WS_URL=ws://$IP:9944" >> .env
 echo "[Unit]
@@ -304,4 +310,6 @@ do
     color "32" "You can find the logs of light client $i by executing 'sudo journalctl -u avail-light-${i}.service -f'"
     sleep 1
 done
+
+color "32" "You can find the list of endpoints at $HOME/endpoints.txt"
 
