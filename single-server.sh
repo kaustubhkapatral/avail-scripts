@@ -46,7 +46,8 @@ do
         l) light_tag=${OPTARG};;
     esac
 done
-
+echo $node_tag
+echo $light_tag
 if [ -z "$node_tag" ]
 then
     echo "Please use the -n switch to provide node tag to be deployed"
