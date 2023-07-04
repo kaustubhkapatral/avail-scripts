@@ -258,6 +258,29 @@ do
     #sudo systemctl enable avail-light-${i}.service
     sudo systemctl start avail-light-${i}.service
 done
+
+git clone https://github.com/availproject/avail-apps.git ~/avail-apps
+cd ~/avail-apps
+git checkout 1.6-rc1
+yarn
+export IP=$(curl ifconfig.me)
+echo "WS_URL=ws://$IP:9944" >> .env
+echo "[Unit]
+    Description=Explorer
+    After=network.target
+    [Service]
+    Type=simple
+    User=$USER
+    WorkingDirectory=$HOME/avail-apps
+    ExecStart=/usr/bin/yarn run start
+    Restart=on-failure
+    RestartSec=3
+    LimitNOFILE=4096
+    [Install]
+    WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/explorer.service"
+
+sudo systemctl start explorer.service
+
 color "32" "Created and started avail light clients systemd processes"
 sleep 4
 color "32" "One-click devnet setup is now complete."
