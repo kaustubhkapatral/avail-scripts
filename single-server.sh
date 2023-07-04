@@ -220,6 +220,8 @@ confidence = 92.0
 avail_path = \"$HOME/avail-home/avail-light/light-1\"
 " | sudo tee "$HOME/avail-home/avail-light/light-1/config.yaml"
 
+echo "HTTP port of light client 1 is: http://$IP:7000" >> $HOME/endpoints.txt
+
 color "33" "Generating home directories for remaining light clients"
 sleep 4
 
@@ -243,6 +245,8 @@ confidence = 92.0
 prometheus_port = $PROM
 avail_path = \"$HOME/avail-home/avail-light/light-$i\"
 " | sudo tee "$HOME/avail-home/avail-light/light-$i/config.yaml" 
+echo "HTTP port of light client 1 is: http://$IP:$HTTP" >> $HOME/endpoints.txt
+
 done
 
 color "33" "Generating systemd service files for light clients"
@@ -289,6 +293,7 @@ echo "[Unit]
     WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/explorer.service"
 sudo systemctl daemon-reload 
 sudo systemctl start explorer.service
+echo "Explorer url is http://$IP:3000" > $HOME/endpoints.txt
 
 color "32" "Created and started avail light clients systemd processes"
 sleep 4
