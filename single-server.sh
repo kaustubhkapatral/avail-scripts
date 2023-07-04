@@ -72,6 +72,7 @@ then
     tar -xvf avail-light-linux-amd64.tar.gz
     sudo mv avail-light-linux-amd64 /usr/bin/avail-light
     rm avail-light-linux-amd64.tar.gz
+    rm data-avail-linux-amd64.tar.gz
 fi
 
 if [ $aarch == "aarch64" ]
@@ -83,6 +84,7 @@ then
     tar -xvf avail-light-linux-aarch64.tar.gz
     sudo mv avail-light-linux-aarch64 /usr/bin/avail-light 
     rm avail-light-linux-aarch64.tar.gz
+    rm data-avail-linux-aarch64.tar.gz
 fi
 
 # Keys creation
