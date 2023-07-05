@@ -11,9 +11,6 @@ function color() {
 
 # Take the basic deployments arguments from the user.
 
-#echo "Please enter the tag of the node version to be deployed"
-#read TAG_VERSION
-
 color "33" "Please enter the number of validator nodes you want to deploy.[default=3]" 
 
 read VAL_COUNT
@@ -30,15 +27,7 @@ then
     LIGHT_COUNT=3
 fi
 
-color "32" "Setting up $VAL_COUNT validators and $LIGHT_COUNT light clients. Press ENTER to proceed or Ctrl+c to exit the setup"
-read
-
-curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-
-sudo apt-get install -y nodejs
-
-npm install -g yarn
-
+# Check the arguments provided by the user and stop the script if they've not been provided  
 while getopts ":n:l:" flag
 do
     case "$flag" in
@@ -46,8 +35,7 @@ do
         l) light_tag=${OPTARG};;
     esac
 done
-echo $node_tag
-echo $light_tag
+
 if [ -z "$node_tag" ]
 then
     echo "Please use the -n switch to provide node tag to be deployed"
@@ -60,9 +48,20 @@ then
     exit
 fi
 
+
+color "32" "Setting up $VAL_COUNT validators and $LIGHT_COUNT light clients. Press ENTER to proceed or Ctrl+c to exit the setup"
+read
+
+# Installing node and yarn prereq
+
+curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+
+sudo apt-get install -y nodejs
+
+npm install -g yarn
+
+# Download the binaries based on the system architecture
 export aarch=$(uname -m)
-
-
 if [ $aarch == "x86_64" ]
 then
     wget https://github.com/availproject/avail/releases/download/$node_tag/data-avail-linux-amd64.tar.gz
@@ -87,7 +86,7 @@ then
     rm data-avail-linux-aarch64.tar.gz
 fi
 
-# Keys creation
+# Keys creation and chainspec build
 color "33" "Setting up sudo, tech-committee and validator accounts and creating their keys"
 sleep 4
 
@@ -131,6 +130,8 @@ CHAIN_NAME=$(cat $HOME/avail-keys/populated.devnet.chainspec.raw.json | jq -r .i
 
 color "32" "Generated the chainspec. Chain id of the devnet is $CHAIN_NAME"
 sleep 4
+
+# Setting up validators 
 
 color "33" "Creating validator home directories and importing respective keys"
 sleep 4
@@ -176,7 +177,6 @@ do
     [Install]
     WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/avail-val-${i}.service"
 
-    #sudo systemctl enable avail-val-${i}.service
     sudo systemctl start avail-val-${i}.service
     echo "Validator $i RPC endpoint is: http://$IP:$RPC" >> $HOME/endpoints.txt
     echo "Validator $i WS endpoint is : http://$IP:$WS" >> $HOME/endpoints.txt
@@ -268,9 +268,10 @@ do
     [Install]
     WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/avail-light-${i}.service"
 
-    #sudo systemctl enable avail-light-${i}.service
     sudo systemctl start avail-light-${i}.service
 done
+
+# Setting up the explorer
 
 git clone https://github.com/availproject/avail-apps.git ~/avail-apps
 cd ~/avail-apps
