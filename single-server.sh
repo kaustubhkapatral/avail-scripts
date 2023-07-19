@@ -27,33 +27,41 @@ then
     LIGHT_COUNT=3
 fi
 
+while true
+do
 color "33" "Please specify the absolute path of the node binary or the tag to be deployed" 
 read node_binary
 if [[ $node_binary == v* ]]
 then 
     node_tag=$node_binary
+    break
 elif [[ $node_binary == /* ]] 
 then
    
    sudo cp "$node_binary" /usr/bin/data-avail
-
+   break 
 else
     echo "Please specify correct node binary or the tag"
 fi
+done
 
+while true
+do
 color "33" "Please specify the absolute path of the light client binary or the tag to be deployed" 
 read l_bin
 if [[ $l_bin == v* ]]
 then 
     light_tag=$l_bin
+    break
 elif [[ $l_bin == /* ]] 
 then
    sudo cp "$l_bin" /usr/bin/avail-light
+   break
 
 else
     echo "Please specify correct light client binary or the tag"
 fi
-
+done
 
 
 
@@ -68,6 +76,10 @@ sudo apt-get install -y nodejs
 
 npm install -g yarn
 
+
+
+if [[ $node_binary == v* ]] && [[ $l_bin == v* ]]
+then 
 # Download the binaries based on the system architecture
 export aarch=$(uname -m)
 if [ $aarch == "x86_64" ]
@@ -92,6 +104,7 @@ then
     sudo mv avail-light-linux-aarch64 /usr/bin/avail-light 
     rm avail-light-linux-aarch64.tar.gz
     rm data-avail-linux-aarch64.tar.gz
+fi
 fi
 
 # Keys creation and chainspec build
