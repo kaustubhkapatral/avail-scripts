@@ -27,26 +27,34 @@ then
     LIGHT_COUNT=3
 fi
 
-# Check the arguments provided by the user and stop the script if they've not been provided  
-while getopts ":n:l:" flag
-do
-    case "$flag" in
-        n) node_tag=${OPTARG};;
-        l) light_tag=${OPTARG};;
-    esac
-done
-
-if [ -z "$node_tag" ]
+color "33" "Please specify the absolute path of the node binary or the tag to be deployed" 
+read node_binary
+if [[ $node_binary == v* ]]
+then 
+    node_tag=$node_binary
+elif [[ $node_binary == /* ]] 
 then
-    echo "Please use the -n switch to provide node tag to be deployed"
-    exit
+   
+   sudo cp "$node_binary" /usr/bin/data-avail
+
+else
+    echo "Please specify correct node binary or the tag"
 fi
 
-if [ -z "$light_tag" ]
+color "33" "Please specify the absolute path of the light client binary or the tag to be deployed" 
+read l_bin
+if [[ $l_bin == v* ]]
+then 
+    light_tag=$l_bin
+elif [[ $l_bin == /* ]] 
 then
-    echo "Please use the -l switch to provide light client tag to be deployed"
-    exit
+   sudo cp "$l_bin" /usr/bin/avail-light
+
+else
+    echo "Please specify correct light client binary or the tag"
 fi
+
+
 
 
 color "32" "Setting up $VAL_COUNT validators and $LIGHT_COUNT light clients. Press ENTER to proceed or Ctrl+c to exit the setup"
