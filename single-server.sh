@@ -27,41 +27,52 @@ then
     LIGHT_COUNT=3
 fi
 
-while true
-do
+# if $node_binary --version 2>&1 | grep -q "avail-light [0-9]\+"; then
 color "33" "Please specify the absolute path of the node binary or the tag to be deployed" 
 read node_binary
 if [[ $node_binary == v* ]]
 then 
     node_tag=$node_binary
-    break
+    
 elif [[ $node_binary == /* ]] 
 then
-   
-   sudo cp "$node_binary" /usr/bin/data-avail
-   break 
+    if $node_binary --version 2>&1 | grep -q "data-avail [0-9]\+"
+    then
+        sudo cp "$node_binary" /usr/bin/data-avail
+    else
+        echo " Please enter correct binary"
+        exit 0
+    fi    
 else
     echo "Please specify correct node binary or the tag"
+    exit 0
 fi
-done
 
-while true
-do
+
+
 color "33" "Please specify the absolute path of the light client binary or the tag to be deployed" 
 read l_bin
 if [[ $l_bin == v* ]]
 then 
     light_tag=$l_bin
-    break
+    
 elif [[ $l_bin == /* ]] 
 then
-   sudo cp "$l_bin" /usr/bin/avail-light
-   break
+    if $l_bin --version 2>&1 | grep -q "avail-light [0-9]\+"
+    then
+        sudo cp "$l_bin" /usr/bin/avail-light
+    else
+        echo " Please enter correct binary"
+        exit 0
+    fi
 
 else
-    echo "Please specify correct light client binary or the tag"
+    color "33" "Please specify correct light client binary or the tag" 
+    exit 0
+
+    
 fi
-done
+
 
 
 
