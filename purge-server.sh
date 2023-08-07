@@ -48,11 +48,7 @@ sleep 2
 
 sudo systemctl stop avail-full.service
 
-sudo systemctl stop explorer.service
-
 sudo rm /etc/systemd/system/avail-full.service
-
-sudo rm /etc/systemd/system/explorer.service
 
 sudo systemctl daemon-reload
 
@@ -63,6 +59,8 @@ rm -rf $HOME/avail-home
 rm -rf $HOME/avail-keys
 
 rm -rf $HOME/avail-apps
+
+rm -rf $HOME/build
 
 rm $HOME/endpoints.txt
 

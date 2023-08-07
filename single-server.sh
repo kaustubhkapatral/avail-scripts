@@ -27,40 +27,62 @@ then
     LIGHT_COUNT=3
 fi
 
-# Check the arguments provided by the user and stop the script if they've not been provided  
-while getopts ":n:l:" flag
-do
-    case "$flag" in
-        n) node_tag=${OPTARG};;
-        l) light_tag=${OPTARG};;
-    esac
-done
+color "33" "Please specify the absolute path of the node binary or the tag to be deployed" 
 
-if [ -z "$node_tag" ]
+read node_binary
+if [[ $node_binary == v* ]]
+then 
+    node_tag=$node_binary
+    
+elif [[ $node_binary == /* ]] 
 then
-    echo "Please use the -n switch to provide node tag to be deployed"
-    exit
+    # validation check to make sure the provided binary is valid
+    if $node_binary --version | grep "data-avail"
+    then
+        sudo cp "$node_binary" /usr/bin/data-avail
+    else
+        echo " Please enter correct binary"
+        exit 
+    fi    
+else
+    echo "Please specify correct node binary or the tag"
+    exit 
 fi
 
-if [ -z "$light_tag" ]
-then
-    echo "Please use the -l switch to provide light client tag to be deployed"
-    exit
-fi
 
+color "33" "Please specify the absolute path of the light client binary or the tag to be deployed" 
+
+read l_bin
+if [[ $l_bin == v* ]]
+then 
+    light_tag=$l_bin
+    
+elif [[ $l_bin == /* ]] 
+then
+    # validation check to make sure the provided binary is valid
+    if $l_bin --version | grep "avail-light"
+    then
+        sudo cp "$l_bin" /usr/bin/avail-light
+    else
+        echo " Please enter correct binary"
+        exit 
+    fi
+else
+    color "33" "Please specify correct light client binary or the tag" 
+    exit 
+fi
 
 color "32" "Setting up $VAL_COUNT validators and $LIGHT_COUNT light clients. Press ENTER to proceed or Ctrl+c to exit the setup"
 read
 
-# Installing node and yarn prereq
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get install build-essential jq -y
+sudo apt-get install apache2 -y
 
-curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-
-sudo apt-get install -y nodejs
-
-npm install -g yarn
-
-# Download the binaries based on the system architecture
+if [[ $node_binary == v* ]] && [[ $l_bin == v* ]]
+then 
+# Download the binaries based on the system architecture only if the tag version is provided
 export aarch=$(uname -m)
 if [ $aarch == "x86_64" ]
 then
@@ -84,6 +106,7 @@ then
     sudo mv avail-light-linux-aarch64 /usr/bin/avail-light 
     rm avail-light-linux-aarch64.tar.gz
     rm data-avail-linux-aarch64.tar.gz
+fi
 fi
 
 # Keys creation and chainspec build
@@ -182,6 +205,8 @@ do
     echo "Validator $i WS endpoint is : http://$IP:$WS" >> $HOME/endpoints.txt
 done
 
+# Setting up a fullnode for the explorer
+
 echo "[Unit]
     Description=Avail full node daemon
     After=network.target
@@ -272,29 +297,14 @@ do
 done
 
 # Setting up the explorer
-
-git clone https://github.com/availproject/avail-apps.git ~/avail-apps
-cd ~/avail-apps
-git checkout 1.6-rc1
-yarn
-rm .env
-echo "WS_URL=ws://$IP:9944" >> .env
-echo "[Unit]
-    Description=Explorer
-    After=network.target
-    [Service]
-    Type=simple
-    User=$USER
-    WorkingDirectory=$HOME/avail-apps
-    ExecStart=/usr/bin/yarn run start
-    Restart=on-failure
-    RestartSec=3
-    LimitNOFILE=4096
-    [Install]
-    WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/explorer.service"
-sudo systemctl daemon-reload 
-sudo systemctl start explorer.service
-echo "Explorer url is http://$IP:3000" >> $HOME/endpoints.txt
+cd ~/
+wget https://github.com/availproject/avail-apps/releases/download/v1.6-rc2/avail-explorer.tar.gz
+tar -xvf avail-explorer.tar.gz
+rm avail-explorer.tar.gz
+echo "window.process_env = {"\"WS_URL"\": "\"ws://$IP:9944"\"};" >> build/env-config.js
+sudo cp -r build/* /var/www/html/
+sudo systemctl restart apache2
+echo "Explorer url is http://$IP" >> $HOME/endpoints.txt
 
 color "32" "Created and started avail light clients systemd processes"
 sleep 4
