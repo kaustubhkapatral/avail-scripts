@@ -143,7 +143,7 @@ sleep 4
 
 python3 consolidate-keys.py $HOME/avail-keys
 
-cp templates/genesis/devnet.template.json $HOME/avail-keys
+data-avail build-spec --disable-default-bootnode --chain local > $HOME/avail-keys/devnet.template.json
 
 python3 update-dev-chainspec.py $HOME/avail-keys
 
