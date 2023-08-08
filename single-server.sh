@@ -119,7 +119,7 @@ sleep 3
 git clone https://github.com/availproject/avail-light-bootstrap.git ~/avail-bootstrap && cd ~/avail-bootstrap
 cargo build --release
 cp target/release/avail-light-bootstrap /usr/bin
-
+cd ~/avail-scripts
 # Keys creation and chainspec build
 color "33" "Setting up sudo, tech-committee and validator accounts and creating their keys"
 sleep 4

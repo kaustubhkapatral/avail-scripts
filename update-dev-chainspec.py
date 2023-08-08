@@ -22,6 +22,9 @@ with open(work_dir + "/master.json", 'r') as master_file:
 
 
 chainspec["id"] = chainspec["id"] + "_" + str(uuid.uuid1())
+chainspec["name"] = "Avail-Devnet"
+chainspec["chainType"] = "Live"
+chainspec["protocolId"] = "da1"
 
 rt = chainspec["genesis"]["runtime"]
 
