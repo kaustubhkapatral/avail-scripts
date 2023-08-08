@@ -79,6 +79,10 @@ sudo apt-get update
 sudo apt-get -y upgrade
 sudo apt-get install build-essential jq -y
 sudo apt-get install apache2 -y
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+source $HOME/.cargo/env
+rustup update nightly
+rustup target add wasm32-unknown-unknown --toolchain nightly
 
 if [[ $node_binary == v* ]] && [[ $l_bin == v* ]]
 then 
@@ -108,6 +112,13 @@ then
     rm data-avail-linux-aarch64.tar.gz
 fi
 fi
+
+color "33" "Cloning and building the light client bootstrap"
+sleep 3
+
+git clone https://github.com/availproject/avail-light-bootstrap.git ~/avail-bootstrap && cd ~/avail-bootstrap
+cargo build --release
+cp target/release/avail-light-bootstrap /usr/bin
 
 # Keys creation and chainspec build
 color "33" "Setting up sudo, tech-committee and validator accounts and creating their keys"
@@ -234,14 +245,12 @@ data-avail key generate-node-key 2> $HOME/avail-keys/light-client-boot.public.ke
 mkdir -p $HOME/avail-home/avail-light/light-1
 
 echo "log_level = \"info\"
-http_server_host = \"127.0.0.1\"
-http_server_port = \"7000\"
-libp2p_seed = 1
-libp2p_port = \"37000\"
+p2p_port = \"3700\"
 secret_key = { key =  \"$(cat $HOME/avail-keys/light-client-boot.private.key)\" }
-full_node_rpc = [\"http://127.0.0.1:26657\"]
-app_id = 0
-confidence = 92.0
+identify_protocol = \"/avail_kad/id/1.0.0\"
+identify_agent = \"avail-light-client/rust-client\"
+kad_connection_idle_timeout = 30
+kad_query_timeout = 60
 avail_path = \"$HOME/avail-home/avail-light/light-1\"
 " | sudo tee "$HOME/avail-home/avail-light/light-1/config.yaml"
 
@@ -277,7 +286,20 @@ done
 color "33" "Generating systemd service files for light clients"
 sleep 4
 
-for (( i=1; i<=$LIGHT_COUNT; i++ ))
+echo "[Unit]
+    Description=Avail light client bootstrap
+    After=network.target
+    [Service]
+    Type=simple
+    User=$USER
+    ExecStart=$(which avail-light-bootstrap) -C $HOME/avail-home/avail-light/light-1/config.yaml
+    Restart=on-failure
+    RestartSec=3
+    LimitNOFILE=4096
+    [Install]
+    WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/avail-light-1.service"
+
+for (( i=2; i<=$LIGHT_COUNT; i++ ))
 do
     
     echo "[Unit]
