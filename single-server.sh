@@ -245,7 +245,7 @@ data-avail key generate-node-key 2> $HOME/avail-keys/light-client-boot.public.ke
 mkdir -p $HOME/avail-home/avail-light/light-1
 
 echo "log_level = \"info\"
-p2p_port = \"3700\"
+p2p_port = 3700
 secret_key = { key =  \"$(cat $HOME/avail-keys/light-client-boot.private.key)\" }
 identify_protocol = \"/avail_kad/id/1.0.0\"
 identify_agent = \"avail-light-client/rust-client\"
@@ -298,6 +298,8 @@ echo "[Unit]
     LimitNOFILE=4096
     [Install]
     WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/avail-light-1.service"
+
+sudo systemctl start avail-light-1.service
 
 for (( i=2; i<=$LIGHT_COUNT; i++ ))
 do
